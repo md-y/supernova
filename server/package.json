@@ -1,0 +1,29 @@
+{
+  "name": "supernova",
+  "version": "0.0.1",
+  "description": "A multiplayer turn-based web game",
+  "main": "supernova.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/midymyth/supernova.git"
+  },
+  "keywords": [
+    "game",
+    "socket.io",
+    "node",
+    "multiplayer",
+    "website"
+  ],
+  "author": "midymyth",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/midymyth/supernova/issues"
+  },
+  "homepage": "https://midymyth.github.io/supernova",
+  "dependencies": {
+    "socket.io": "^2.0.4"
+  }
+}
