@@ -32,7 +32,7 @@
             if (address.validity.valid && username.validity.valid) {
                 location.href = "https://midymyth.github.io/supernova/client?server=" + 
                                                                     window.btoa(address.value) + "?name=" + 
-                                                                    window.btoa(username.value) + "?color="
+                                                                    window.btoa(username.value) + "?color=" +
                                                                     color.hex();
             }
         }
