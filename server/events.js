@@ -28,6 +28,11 @@ var events = {
         client: function(data) {
             players = data.players;
         }
+    },
+    "changeBoardSize": {
+        client: function(data) {
+            tilesSR = data.size();
+        }
     }
 };
 

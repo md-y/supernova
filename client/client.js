@@ -1,25 +1,37 @@
-var soc, self, drawFrame, bd, bde, width, height, players;
-var args = {};
-var frameRate = 30;
-var viewScale = 50;
+var soc, self, drawFrame, bd, bde, width, height, players, 
+mouseDown = false,
+mouseX = 0, mouseY = 0, pmouseX = 0; pmouseY = 0, 
+cameraX = 0, cameraY = 0, cameraView = 25, viewScale = 50, viewScaleVert = 25, //Viewscale = # of viewed tiles on the X axis
+tilesSR = 100, tileSize = 38;
+args = {},
+frameRate = 30;
 
 window.onload = function() {
     args.server = window.atob(getKey(location.href, "server", "aHR0cDovL2xvY2FsaG9zdA=="));
     args.username = window.atob(getKey(location.href, "name", "amVmZg=="));
     args.color = getKey(location.href, "color", "#ffffff");
 
-    $.getScript(args.server + "/events", function() {
-        setupSocket();
-        drawFrame = setInterval(draw, 1000/frameRate);
+    var eventsElement = document.createElement("script"); //Import events.js
+    eventsElement.src = args.server + "/events";
+    eventsElement.type = "text/javascript";
+    document.getElementById("head").appendChild(eventsElement);
 
-        bde = document.getElementById("board");
-        window.addEventListener("resize", resetDimensions);
-        window.addEventListener("orientationchange", resetDimensions);
-        resetDimensions();
-        bd = bde.getContext("2d");
-    }).fail(function() {
-        console.log("Failed to get events.js from server.");
-    });
+    setupSocket(); //Connects to server
+
+    bde = document.getElementById("board"); //Setup Canvas ("board")
+    var resetDimensions = function() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        bde.width = width;
+        bde.height = height;
+        viewScale = 50;
+    }
+    window.addEventListener("resize", resetDimensions);
+    window.addEventListener("orientationchange", resetDimensions);
+    resetDimensions();
+    bd = bde.getContext("2d");
+
+    drawFrame = setInterval(draw, 1000/frameRate);
 }
 
 function getKey(s, k, d) {
@@ -32,7 +44,7 @@ function getKey(s, k, d) {
 }
 
 function setupSocket () {
-    soc = io(args.server);
+    soc = io(args.server); //Connects to server
 
     soc.on("event", function(data) {
         var event = events[data.type];
@@ -45,14 +57,10 @@ function setupSocket () {
         }
     });
 
-    soc.emit("event", {type: "newPlayer", username: args.username, color: args.color});
-}
-
-function resetDimensions() {
-    width = window.innerWidth;
-    height = window.innerHeight;
-    bde.width = width;
-    bde.height = height;
+    soc.emit("event", { type: "newPlayer", 
+                        username: args.username, 
+                        color: args.color
+                        });
 }
 
 function debug(de, pass, args) {
@@ -60,15 +68,44 @@ function debug(de, pass, args) {
 }
 
 function draw() {
-    for (var y = 0; y < height / viewScale; y++) {
-        for (var x = 0; x < width / viewScale; x++) {
+    viewScaleVert = height/(width/viewScale);
+    tileSize = width/viewScale;
+
+    //Confine Camera
+    if (mouseDown) {
+        cameraX += (mouseX - pmouseX) / tileSize;
+        cameraY += (mouseY - pmouseY) / tileSize;
+    }
+    cameraX = cameraX < 0 ? 0 : cameraX;
+    cameraX = cameraX + viewScale > tilesSR ? tilesSR - viewScale : cameraX;
+    cameraY = cameraY < 0 ? 0 : cameraY;
+    cameraY = cameraY + viewScaleVert > tilesSR ? tilesSR - viewScaleVert : cameraY;
+    viewScale = viewScale < 1 ? 1 : viewScale;
+    viewScale = viewScale > tilesSR ? tilesSR : viewScale;
+
+    bd.clearRect(0, 0, width, height);
+    var partY;
+    for (var y = 0; y <= viewScaleVert + 1; y++) {
+        partY = 1 - cameraY % 1;
+        for (var x = 0; x <= viewScale; x++) {
             bd.fillStyle = "gray";
-            for (let i in players) {
-                if (players[i].x == x && players[i].y == y) {
-                    bd.fillStyle = players[i].color;
-                }
-            }
-            bd.fillRect(x * viewScale + x, y * viewScale + y, viewScale - 1, viewScale - 1);
+            bd.fillRect((x - (1 - cameraX % 1)) * tileSize, (y - partY) * tileSize, tileSize - 1, tileSize - 1);
         }
     }
+
+    //Draw Horizontal View Bar
+    bd.fillStyle = "black";
+    bd.fillRect(0, height - 25, (width - 25), 25);
+    bd.fillStyle = "red";
+    bd.fillRect((width - 25) * cameraX / tilesSR, height - 25, viewScale * (width - 25) / tilesSR, 25);
+
+    //Draw Vertical View Bar
+    bd.fillStyle = "black";
+    bd.fillRect(width - 25, 0, 25, (height - 25));
+    bd.fillStyle = "red";
+    bd.fillRect(width - 25, (height - 25) * cameraY / tilesSR, 25, viewScaleVert * (height - 25) / tilesSR);
+
+    //Update Previous Mouse Location
+    pmouseX = mouseX; 
+    pmouseY = mouseY; 
 }
