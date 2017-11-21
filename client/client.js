@@ -1,4 +1,5 @@
-var soc, player, drawFrame, bd, bde, width, height, players, mobile,
+var soc, drawFrame, bd, bde, width, height, 
+players = {}, playerList, player,
 mouseDown = false,
 mouseX = 0, mouseY = 0, pmouseX = 0; pmouseY = 0, 
 cameraX = 0, cameraY = 0, cameraView = 25, viewScale = 50, viewScaleVert = 25, //Viewscale = # of viewed tiles on the X axis
@@ -18,7 +19,6 @@ window.onload = function() {
     args.server = window.atob(getKey(location.href, "server", "aHR0cDovL2xvY2FsaG9zdA=="));
     args.username = window.atob(getKey(location.href, "name", "amVmZg=="));
     args.color = getKey(location.href, "color", "#ffffff");
-
     var eventsElement = document.createElement("script"); //Import events.js
     eventsElement.src = args.server + "/events";
     eventsElement.type = "text/javascript";
@@ -51,6 +51,7 @@ window.onload = function() {
         h.style.color = "red";
     }
     document.getElementById("head").appendChild(eventsElement);
+    playerList = document.getElementById("playerList");
 
     bde = document.getElementById("board"); //Setup Canvas ("board")
     var resetDimensions = function() {

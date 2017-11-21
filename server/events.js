@@ -15,32 +15,53 @@ var events = {
             console.log("New Player:", data.username);
         },
         server: function(data, meta) {
-            meta.players.push(new meta.Player(data.username, meta.soc.id, data.color, meta.players.length));
-            meta.io.in("game").emit("event", {type: "sync", players: meta.players, boardSize: meta.cfg.boardSize});
-            meta.soc.emit("event", {type: "setup"});
+            meta.players[meta.soc.id] = new meta.Player(data.username, meta.soc.id, data.color, meta.players.length);
+            meta.io.in("game").emit("event", {type: "sync", players: meta.players});
+            meta.soc.emit("event", {type: "setup", boardSize: meta.cfg.boardSize});
         }
     },
     "turn": {
         client: function(data) {
+            console.log("Turn");
             players = data.players;
+            soc.emit("event", {type: "ping"});
+            events.sync.client(data);
+        }
+    },
+    "ping": {
+        client: function(data) {
+            soc.emit("event", {type: "ping"});
+        },
+        server: function(data, meta) {
+            meta.players[meta.soc.id].lastPing = new Date().getTime();
         }
     },
     "sync": {
         client: function(data) {
-            players = data.players;
-            tilesSR = data.boardSize;
-            for (let i in players) {
-                if (players[i].id = soc.id) {
-                    player = players[i];
+            for (let i in data.players) {
+                if (!(i in players)) {
+                    var listing = document.createElement("h5");
+                    listing.id = data.players[i].id;
+                    listing.innerHTML = data.players[i].username;
+                    listing.style.color = data.players[i].color;
+                    playerList.appendChild(listing);
                 }
             }
+            players = data.players;
+            player = players[soc.id];
         }
     },
     "setup": {
         client: function(data) {
             cameraX = player.x - 10;
             cameraY = player.y - 10;
+            tilesSR = data.boardSize;
             console.log("Setup Complete \nGLHF");
+        }
+    },
+    "playerDisconnect": {
+        client: function(data) {
+            document.getElementById(data.player.id).remove();
         }
     }
 };

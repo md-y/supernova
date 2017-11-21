@@ -3,13 +3,15 @@ io = require("socket.io")(server),
 events = require("./events.js").events,
 fs = require("fs"),
 cfg = require("./config.json"),
-players = [];
+players = {},
+gameState = 0, //0 = Stopped; 1 = Running
+gameLoop;
 
 server.listen(process.env.PORT || cfg.port);
 
 function reqHandler(req, res) {
-    if (req.url.split('?')[0] == "/events") {
-        res.writeHead(200);
+    switch(req.url.split('?')[0]) {
+    case "/events":
         fs.readFile(__dirname +  "/events.js", function(err, data) {
             if(err) {
                 res.writeHead(500);
@@ -17,11 +19,23 @@ function reqHandler(req, res) {
                 res.end();
                 return;
             }
+            res.writeHead(200);
             res.end(data);
         });
-    } else {
-        res.writeHead(302, {"Location": "https://midymyth.github.io/supernova?server=" + new Buffer(server.address().address + ':' + server.address().port).toString("base64")});
+    break;
+    case "/players":
+        res.setHeader('Content-Type', 'application/json');
+        res.writeHead(200);
+        var total = Object.keys(players).length;
+        res.end(JSON.stringify({
+            total: total,
+            print: total + " players"
+        }));
+    break;
+    default:
+        res.writeHead(302, {"Location": "https://midymyth.github.io/supernova"});
         res.end();
+    break;
     }
 }
 
@@ -33,16 +47,17 @@ class Player {
         this.health = 100;
         this.sp = 0;
         this.color = color_;
+        this.lastPing = new Date().getTime();
         do {
-            var bad = false;
+            var cont = false;
             this.x = Math.floor(Math.random() * cfg.boardSize);
             this.y = Math.floor(Math.random() * cfg.boardSize);
             for (let i in players) {
                 if (Math.abs(players[i].x - this.x) < cfg.boardSize/10 && Math.abs(players[i].y - this.y) < cfg.boardSize/10) {
-                    bad = true;
+                    cont = true;
                 }
             }
-        } while (bad);
+        } while (cont);
     }
 }
 
@@ -64,4 +79,28 @@ io.on("connection", function(soc) {
             event.server(data, meta);
         }
     });
+    if (gameState == 0) {
+        gameState = 1;
+        console.log("Game Started");
+        gameLoop = setInterval(turn, 5000);
+    }
 });
+
+function turn() {
+    var time = new Date().getTime();
+    for (let i in players) {
+        if (time - players[i].lastPing > 10000) {
+            console.log("Player " + players[i].username + " (" + i + ") has been timed out.");
+            io.in("game").emit("event", {type: "playerDisconnect", player: players[i]});
+            delete players[i];
+            if (i in io.sockets.connected) {
+                io.sockets.connected[i].disconnect();
+            }
+        }
+    }
+    if (Object.keys(players).length == 0) {
+        gameState = 0;
+        clearInterval(gameLoop);
+    }
+    io.in("game").emit("event", {type: "turn", players: players});
+}

@@ -14,8 +14,11 @@
         <script type="text/javascript" src="https://midymyth.github.io/js/getkey.js"></script>
     </head>
     <style>
-        body {
+        * {
             margin: 0;
+            padding: 0;
+        }
+        body {
             overflow: hidden;
         }
         header {
@@ -28,10 +31,26 @@
             z-index: 1;
             background-color: rgba(225, 225, 225, 0.80);
         }
+        header * {
+            position: fixed;
+            height: 10%;
+        }
+        #playerList {
+            top: 0;
+            left: 75%;
+        }
+        #playerList * {
+            display: inline;
+            position: relative;
+            padding-right: 0.5em;
+        }
     </style>
     <body>     
         <header>
             <h1 id="statusHeading">Loading...</h1>
+            <section id="playerList">
+                <h5>Players</h5><br>
+            </section>
         </header>
         <canvas id="board">
             <h1>Your browser does not support canvases. Please use another.</h1>
