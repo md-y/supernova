@@ -2,7 +2,7 @@
   "name": "supernova",
   "version": "0.0.1",
   "description": "A multiplayer turn-based web game",
-  "main": "supernova.js",
+  "main": "server/supernova.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
