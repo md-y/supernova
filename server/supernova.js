@@ -29,7 +29,7 @@ function reqHandler(req, res) {
         var total = Object.keys(players).length;
         res.end(JSON.stringify({
             total: total,
-            print: total + " players"
+            print: total + " player(s)"
         }));
     break;
     default:
@@ -79,23 +79,32 @@ io.on("connection", function(soc) {
             event.server(data, meta);
         }
     });
+    soc.on("disconnect", function(data){disconnect(soc.id)});
     if (gameState == 0) {
         gameState = 1;
         console.log("Game Started");
         gameLoop = setInterval(turn, 5000);
     }
+    
 });
+
+function disconnect(id) {
+    if(id in players) {
+        io.in("game").emit("event", {type: "playerDisconnect", player: players[id]});
+        console.log("Player " + players[id].username + " (" + id + ") has disconnected.");
+        delete players[id];
+    }
+    if (id in io.sockets.connected) {
+        io.sockets.connected[id].disconnect();
+    }
+}
 
 function turn() {
     var time = new Date().getTime();
     for (let i in players) {
         if (time - players[i].lastPing > 10000) {
+            disconnect(i);
             console.log("Player " + players[i].username + " (" + i + ") has been timed out.");
-            io.in("game").emit("event", {type: "playerDisconnect", player: players[i]});
-            delete players[i];
-            if (i in io.sockets.connected) {
-                io.sockets.connected[i].disconnect();
-            }
         }
     }
     if (Object.keys(players).length == 0) {
