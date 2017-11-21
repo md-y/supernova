@@ -68,15 +68,6 @@ window.onload = function() {
     drawFrame = setInterval(draw, 1000/frameRate);
 }
 
-function getKey(s, k, d) {
-    try {
-        return s.match("[?]" + k + "=([^?]+)")[1];
-    } catch (err) {
-        console.log("Cannot find " + k + ", using " + d)
-        return d;
-    }
-}
-
 function debug(de, pass, args) {
     soc.emit("event", {type: "debug", de: de, pass: pass});
 }
