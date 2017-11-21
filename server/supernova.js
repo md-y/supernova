@@ -5,7 +5,7 @@ fs = require("fs"),
 cfg = require("./config.json"),
 players = [];
 
-server.listen(cfg.port);
+server.listen(process.env.PORT || cfg.port);
 
 function reqHandler(req, res) {
     if (req.url.split('?')[0] == "/events") {

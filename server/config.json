@@ -1,5 +1,5 @@
 {
     "boardSize": 100,
     "debugPassword": "admin",
-    "port": 34780
+    "port": 80
 }
