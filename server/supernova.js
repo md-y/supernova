@@ -1,8 +1,9 @@
-var server = require("http").createServer(reqHandler);
-var io = require("socket.io")(server);
-var events = require("./events.js").events;
-var fs = require("fs");
-var players = [];
+var server = require("http").createServer(reqHandler),
+io = require("socket.io")(server),
+events = require("./events.js").events,
+fs = require("fs"),
+cfg = require("./config.json"),
+players = [];
 
 server.listen(80);
 
@@ -25,15 +26,23 @@ function reqHandler(req, res) {
 }
 
 class Player {
-    constructor(username_, id_, color_) {
+    constructor(username_, id_, color_, index_) {
         this.username = username_;
         this.id = id_;
-
+        this.index = index_;
         this.health = 100;
         this.sp = 0;
-        this.x = players.length + 10;
-        this.y = players.length + 10;
         this.color = color_;
+        do {
+            var bad = false;
+            this.x = Math.floor(Math.random() * cfg.boardSize);
+            this.y = Math.floor(Math.random() * cfg.boardSize);
+            for (let i in players) {
+                if (Math.abs(players[i].x - this.x) < cfg.boardSize/10 && Math.abs(players[i].y - this.y) < cfg.boardSize/10) {
+                    bad = true;
+                }
+            }
+        } while (bad);
     }
 }
 
@@ -45,7 +54,7 @@ io.on("connection", function(soc) {
         var meta = {players: players, 
                     soc: soc,
                     Player: Player,
-                    pass: "admin",
+                    cfg: cfg,
                     io: io};
 
         if ("exec" in event) {

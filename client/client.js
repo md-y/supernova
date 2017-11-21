@@ -1,4 +1,4 @@
-var soc, self, drawFrame, bd, bde, width, height, players, mobile,
+var soc, player, drawFrame, bd, bde, width, height, players, mobile,
 mouseDown = false,
 mouseX = 0, mouseY = 0, pmouseX = 0; pmouseY = 0, 
 cameraX = 0, cameraY = 0, cameraView = 25, viewScale = 50, viewScaleVert = 25, //Viewscale = # of viewed tiles on the X axis
@@ -22,9 +22,35 @@ window.onload = function() {
     var eventsElement = document.createElement("script"); //Import events.js
     eventsElement.src = args.server + "/events";
     eventsElement.type = "text/javascript";
-    document.getElementById("head").appendChild(eventsElement);
+    eventsElement.onload = function() {
+        document.getElementById("statusHeading").style.display = "none";
 
-    setupSocket(); //Connects to server
+        console.log("events.js loaded, connecting to server")
+        soc = io(args.server); //Connects to server
+
+        soc.on("event", function(data) {
+            var event = events[data.type];
+
+            if ("exec" in event) {
+                event.exec(data);
+            }
+            if ("client" in event) {
+                event.client(data);
+            }
+        });
+
+        soc.emit("event", { type: "newPlayer", 
+                            username: args.username, 
+                            color: args.color
+                            });
+    }
+    eventsElement.onerror = function() {
+        var h = document.getElementById("statusHeading");
+        h.innerHTML = "Could not connect to server. Please try again.";
+        alert(h.innerHTML)
+        h.style.color = "red";
+    }
+    document.getElementById("head").appendChild(eventsElement);
 
     bde = document.getElementById("board"); //Setup Canvas ("board")
     var resetDimensions = function() {
@@ -51,26 +77,6 @@ function getKey(s, k, d) {
     }
 }
 
-function setupSocket () {
-    soc = io(args.server); //Connects to server
-
-    soc.on("event", function(data) {
-        var event = events[data.type];
-
-        if ("exec" in event) {
-            event.exec(data);
-        }
-        if ("client" in event) {
-            event.client(data);
-        }
-    });
-
-    soc.emit("event", { type: "newPlayer", 
-                        username: args.username, 
-                        color: args.color
-                        });
-}
-
 function debug(de, pass, args) {
     soc.emit("event", {type: "debug", de: de, pass: pass});
 }
@@ -81,8 +87,8 @@ function draw() {
 
     //Camera
     if (mouseDown) {
-        cameraX += (mouseX - pmouseX) / tileSize;
-        cameraY += (mouseY - pmouseY) / tileSize;
+        cameraX -= (mouseX - pmouseX) / tileSize;
+        cameraY -= (mouseY - pmouseY) / tileSize;
     }
     if (downKeys["ArrowUp"]) {
         cameraY -= 25/tileSize;
@@ -112,10 +118,15 @@ function draw() {
     bd.clearRect(0, 0, width, height);
     var partY;
     for (var y = 0; y <= viewScaleVert + 1; y++) {
-        partY = 1 - cameraY % 1;
+        partY = cameraY % 1;
         for (var x = 0; x <= viewScale; x++) {
             bd.fillStyle = "gray";
-            bd.fillRect((x - (1 - cameraX % 1)) * tileSize, (y - partY) * tileSize, tileSize - 1, tileSize - 1);
+            for (let i in players) {
+                if (Math.floor(cameraX) + x == players[i].x && Math.floor(cameraY) + y == players[i].y) {
+                    bd.fillStyle = players[i].color;
+                }
+            }
+            bd.fillRect((x - cameraX % 1) * tileSize, (y - partY) * tileSize, tileSize - 1, tileSize - 1);
         }
     }
 

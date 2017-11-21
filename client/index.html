@@ -6,7 +6,7 @@
     onwheel="viewScale += event.deltaY"
     onkeydown="downKeys[event.key] = true;"
     onkeyup="downKeys[event.key] = false;">
-    
+
     <head id="head">
         <meta charset="UTF-8">
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
@@ -30,6 +30,7 @@
     </style>
     <body>     
         <header>
+            <h1 id="statusHeading">Loading...</h1>
         </header>
         <canvas id="board">
             <h1>Your browser does not support canvases. Please use another.</h1>
