@@ -1,4 +1,6 @@
 {
     "boardSize": 100,
-    "debugPassword": "admin"
+    "debugPassword": "admin",
+    "host": "127.0.0.1",
+    "port": 80
 }

@@ -3,6 +3,7 @@
         <meta charset="UTF-8">
         <link rel="stylesheet" type="text/css" href="https://midymyth.github.io/css/main.css">
         <link rel="stylesheet" type="text/css" href="https://midymyth.github.io/css/form.css">
+        <script type="text/javascript" src="https://midymyth.github.io/js/getkey.js"></script>
     </head>
     <body>
         <header>
@@ -23,6 +24,7 @@
         window.onload = function() {
             username = document.getElementById("username");
             address = document.getElementById("address");
+            address.value = window.atob(getKey(location.href, "server", ""));
             color = window.frames[0].window;
             color.setColor( Math.floor(Math.random() * 255), 
 			                Math.floor(Math.random() * 255), 

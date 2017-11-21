@@ -5,7 +5,7 @@ fs = require("fs"),
 cfg = require("./config.json"),
 players = [];
 
-server.listen(80);
+server.listen(cfg.port, cfg.host);
 
 function reqHandler(req, res) {
     if (req.url.split('?')[0] == "/events") {
@@ -20,7 +20,7 @@ function reqHandler(req, res) {
             res.end(data);
         });
     } else {
-        res.writeHead(302, {"Location": "https://midymyth.github.io/supernova"});
+        res.writeHead(302, {"Location": "https://midymyth.github.io/supernova?server=" + new Buffer(server.address().address + ':' + server.address().port).toString("base64")});
         res.end();
     }
 }
