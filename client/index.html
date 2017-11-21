@@ -24,10 +24,11 @@
             onmousemove="mouseX = event.clientX; mouseY = event.clientY;"
             onmousedown="mouseDown = true;"
             onmouseup="mouseDown = false;"
-            onmouseout="mouseDown = false;"
-            onwheel="viewScale += event.deltaY">
+            onmouseout="mouseDown = false; downKeys.allUp();"
+            onwheel="viewScale += event.deltaY"
+            onkeydown="downKeys[event.key] = true;"
+            onkeyup="downKeys[event.key] = false;">
         <header>
-            
         </header>
         <canvas id="board">
             <h1>Your browser does not support canvases. Please use another.</h1>
