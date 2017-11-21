@@ -20,7 +20,7 @@ window.onload = function() {
     args.username = window.atob(getKey(location.href, "name", "amVmZg=="));
     args.color = getKey(location.href, "color", "#ffffff");
     var eventsElement = document.createElement("script"); //Import events.js
-    eventsElement.src = args.server + "/events";
+    eventsElement.src = args.server + (args.server[args.server.length - 1] == '/' ? "events" : "/events");
     eventsElement.type = "text/javascript";
     eventsElement.onload = function() {
         document.getElementById("statusHeading").style.display = "none";
