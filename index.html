@@ -26,9 +26,10 @@
             address = document.getElementById("address");
             address.value = window.atob(getKey(location.href, "server", ""));
             color = window.frames[0].window;
-            color.setColor( Math.floor(Math.random() * 255), 
-			                Math.floor(Math.random() * 255), 
-							Math.floor(Math.random() * 255));
+            color.setMax(200);
+            color.setColor( Math.floor(Math.random() * 200), 
+			                Math.floor(Math.random() * 200), 
+							Math.floor(Math.random() * 200));
         }
         function join() {
             if (address.validity.valid && username.validity.valid) {

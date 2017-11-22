@@ -97,6 +97,11 @@ function disconnect(id) {
     if (id in io.sockets.connected) {
         io.sockets.connected[id].disconnect();
     }
+    if (Object.keys(players).length == 0) {
+        gameState = 0;
+        clearInterval(gameLoop);
+        console.log("Game stopped.");
+    }
 }
 
 function turn() {
@@ -106,10 +111,6 @@ function turn() {
             disconnect(i);
             console.log("Player " + players[i].username + " (" + i + ") has been timed out.");
         }
-    }
-    if (Object.keys(players).length == 0) {
-        gameState = 0;
-        clearInterval(gameLoop);
     }
     io.in("game").emit("event", {type: "turn", players: players});
 }

@@ -1,16 +1,17 @@
 var soc, drawFrame, bd, bde, width, height, 
-players = {}, playerList, player,
+players = {}, playerList, player = {},
 mouseDown = false,
-mouseX = 0, mouseY = 0, pmouseX = 0; pmouseY = 0, 
+mouseX = 0, mouseY = 0, pmouseX = 0; pmouseY = 0, gmouseX = 0, gmouseY = 0, //pmouse = mouse pos on the previous frame; gmouse = global mouse pos
 cameraX = 0, cameraY = 0, cameraView = 25, viewScale = 50, viewScaleVert = 25, //Viewscale = # of viewed tiles on the X axis
 tilesSR = 100, tileSize = 38;
 args = {},
 frameRate = 30,
 downKeys = {
     allUp: function() {
-        var keys = Object.keys(this);
-        for (var i = 1; i < keys.length; i++) { //1 to avoid this function
-            this[keys[i]] = false;
+        for (let i in downKeys) { //1 to avoid this function
+            if (i != "allUp") {
+                downKeys[i] = false;
+            }
         }
     }
 };
@@ -18,7 +19,11 @@ downKeys = {
 window.onload = function() {
     args.server = window.atob(getKey(location.href, "server", "aHR0cDovL2xvY2FsaG9zdA=="));
     args.username = window.atob(getKey(location.href, "name", "amVmZg=="));
-    args.color = getKey(location.href, "color", "#ffffff");
+    args.color = getKey(location.href, "color", "#ffffff").split("#")[1];
+    args.color = (  parseInt(args.color.substring(0, 2), 16) +
+                    parseInt(args.color.substring(2, 4), 16) +
+                    parseInt(args.color.substring(4, 6), 16)) / 3 > 200 ? "#c8c8c8" : '#' + args.color; //Remove colors above grayscale 200
+
     var eventsElement = document.createElement("script"); //Import events.js
     eventsElement.src = args.server + (args.server[args.server.length - 1] == '/' ? "events" : "/events");
     eventsElement.type = "text/javascript";
@@ -100,39 +105,46 @@ function draw() {
     if (downKeys["Enter"]) {
         viewScale -= 1;
     }
-    cameraX = cameraX < 0 ? 0 : cameraX;
-    cameraX = cameraX + viewScale > tilesSR ? tilesSR - viewScale : cameraX;
-    cameraY = cameraY < 0 ? 0 : cameraY;
-    cameraY = cameraY + viewScaleVert > tilesSR ? tilesSR - viewScaleVert : cameraY;
-    viewScale = viewScale < 1 ? 1 : viewScale;
-    viewScale = viewScale > tilesSR ? tilesSR : viewScale;
+    cameraX = cameraX < 0 ? 0 : cameraX; //Set min
+    cameraX = cameraX + viewScale > tilesSR ? tilesSR - viewScale : cameraX; //Set max
+    cameraY = cameraY < 0 ? 0 : cameraY; //Set min
+    cameraY = cameraY + viewScaleVert > tilesSR ? tilesSR - viewScaleVert : cameraY; //Set max
+    viewScale = viewScale < 1 ? 1 : viewScale; //Set min
+    viewScale = viewScale > tilesSR ? tilesSR : viewScale; //Set max
+    var partY = cameraY % 1;
+    var partX = cameraX % 1;
+
+    gmouseX = mouseX/tileSize + cameraX + partX;
+    gmouseY = mouseY/tileSize + cameraY + partY;
 
     bd.clearRect(0, 0, width, height);
-    var partY;
-    for (var y = 0; y <= viewScaleVert + 1; y++) {
-        partY = cameraY % 1;
+    var rx, ry, grayscale;
+    for (var y = 0; y <= viewScaleVert + 1; y++) { //Draw Grid
+        ry = Math.floor(cameraY) + y;
         for (var x = 0; x <= viewScale; x++) {
-            bd.fillStyle = "gray";
+            rx = Math.floor(cameraX) + x;
+            grayscale = x * y;
+            bd.fillStyle = "white";
             for (let i in players) {
-                if (Math.floor(cameraX) + x == players[i].x && Math.floor(cameraY) + y == players[i].y) {
+                if (rx == players[i].x && ry == players[i].y) {
                     bd.fillStyle = players[i].color;
                 }
             }
-            bd.fillRect((x - cameraX % 1) * tileSize, (y - partY) * tileSize, tileSize - 1, tileSize - 1);
+            if (Math.floor(gmouseX - cameraX) == x && Math.floor(gmouseY - cameraY) == y) {
+                bd.fillStyle = "#c0c0c0";
+            }
+
+            bd.fillRect((x - partX) * tileSize, (y - partY) * tileSize, tileSize - 1, tileSize - 1); //Draw Tile
         }
     }
 
-    //Draw Horizontal View Bar
-    bd.fillStyle = "black";
-    bd.fillRect(0, height - 25, (width - 25), 25);
-    bd.fillStyle = "red";
-    bd.fillRect((width - 25) * cameraX / tilesSR, height - 25, viewScale * (width - 25) / tilesSR, 25);
-
-    //Draw Vertical View Bar
-    bd.fillStyle = "black";
-    bd.fillRect(width - 25, 0, 25, (height - 25));
-    bd.fillStyle = "red";
-    bd.fillRect(width - 25, (height - 25) * cameraY / tilesSR, 25, viewScaleVert * (height - 25) / tilesSR);
+    
+    bd.fillStyle = "#808080";
+    bd.fillRect(0, height - 25, (width - 25), 25); //Draw Horizontal View Bar Background
+    bd.fillRect(width - 25, 0, 25, (height - 25)); //Vertical
+    bd.fillStyle = "#b0b0b0";
+    bd.fillRect((width - 25) * cameraX / tilesSR, height - 25, viewScale * (width - 25) / tilesSR, 25); //Draw Horizontal View Bar Foreground
+    bd.fillRect(width - 25, (height - 25) * cameraY / tilesSR, 25, viewScaleVert * (height - 25) / tilesSR); //Vertical
 
     //Update Previous Mouse Location
     pmouseX = mouseX; 
