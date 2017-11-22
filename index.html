@@ -7,10 +7,11 @@
     </head>
     <body>
         <header>
-            <h1>Join A Supernova Game</h1>
+            <h1 id="title">Join A Supernova Game</h1>
+            <a id="anotherlink" style="display:none" href="https://midymyth.github.io/supernova/">Join Another</a>
         </header>
         <div class="form">
-            Server Address
+            <p id="serverlabel">Server Address</p>
             <input type="text" id="address" required="required">
             Username
             <input type="text" id="username" required="required">
@@ -18,13 +19,23 @@
             <iframe src="../embed/colorpicker.html" name="color" width="185" height="125"></iframe>
             <input type="button" onclick="join()" value="Join" class="final">
         </div>
+        <h4>Servers</h4>
+        <a href="https://midymyth.github.io/supernova/?server=aHR0cHM6Ly9zdXBlcm5vdmEtbm9kZS5oZXJva3VhcHAuY29tLw=="><img src="https://img.shields.io/badge/Heroku-Join-brightgreen.svg" alt="Server"></a>
     </body>
     <script>
         var address, username, color;
         window.onload = function() {
             username = document.getElementById("username");
             address = document.getElementById("address");
-            address.value = window.atob(getKey(location.href, "server", ""));
+            var serverkey = window.atob(getKey(location.href, "server", ""));
+            address.value = serverkey;
+            if (serverkey != "") {
+                document.getElementById("title").innerHTML = "Joining " + serverkey;
+                address.style.display = "none";
+                document.getElementById("serverlabel").style.display = "none";
+                document.getElementById("anotherlink").style.display = "inline";
+            }
+
             color = window.frames[0].window;
             color.setMax(200);
             color.setColor( Math.floor(Math.random() * 200), 
