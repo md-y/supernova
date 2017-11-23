@@ -91,7 +91,7 @@ io.on("connection", function(soc) {
         console.log("Game Started");
         gameLoop = setInterval(turn, 5000);
     }
-    console.log(soc.handshake.headers.host);
+    console.log(soc.handshake.url);
 });
 
 function disconnect(id) {
