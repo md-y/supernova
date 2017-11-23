@@ -47,7 +47,7 @@
                 location.href = "https://midymyth.github.io/supernova/client?server=" + 
                                                                     window.btoa(address.value) + "?name=" + 
                                                                     window.btoa(username.value) + "?color=" +
-                                                                    color.hex();
+                                                                    color.hex().split("#")[1];
             }
         }
     </script>

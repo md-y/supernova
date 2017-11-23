@@ -20,7 +20,7 @@ downKeys = {
 window.onload = function() {
     args.server = window.atob(getKey(location.href, "server", "aHR0cDovL2xvY2FsaG9zdA=="));
     args.username = window.atob(getKey(location.href, "name", "amVmZg=="));
-    args.color = getKey(location.href, "color", "#000000").split("#")[1];
+    args.color = getKey(location.href, "color", "000000");
     args.color = (  parseInt(args.color.substring(0, 2), 16) +
                     parseInt(args.color.substring(2, 4), 16) +
                     parseInt(args.color.substring(4, 6), 16)) / 3 > 200 ? "#c8c8c8" : '#' + args.color; //Remove colors above grayscale 200
