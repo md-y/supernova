@@ -1,3 +1,5 @@
+config-override.json
+
 # Logs
 logs
 *.log

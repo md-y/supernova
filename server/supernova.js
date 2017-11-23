@@ -2,10 +2,18 @@ var server = require("http").createServer(reqHandler),
 io = require("socket.io")(server),
 events = require("./events.js").events,
 fs = require("fs"),
-cfg = require("./config.json"),
+cfg,
 players = {},
 gameState = 0, //0 = Stopped; 1 = Running
 gameLoop;
+
+try {
+    cfg = require("./config-override.json");
+    console.log("Module config-overide.json found. Assuming dev version.");
+} catch (err) {
+    cfg = require("./config.json");
+    console.log("Module config-overide.json not found. Assuming shipped version.");
+}
 
 server.listen(process.env.PORT || cfg.port);
 io.origins(cfg.origins);
