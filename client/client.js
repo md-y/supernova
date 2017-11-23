@@ -30,7 +30,6 @@ window.onload = function() {
     eventsElement.type = "text/javascript";
     eventsElement.onload = function() {
         document.getElementById("statusHeading").style.display = "none";
-
         console.log("events.js loaded, connecting to server")
         soc = io(args.server); //Connects to server
 
@@ -74,10 +73,6 @@ window.onload = function() {
     bd = bde.getContext("2d");
 
     drawFrame = setInterval(draw, 1000/frameRate);
-}
-
-function debug(de, pass, args) {
-    soc.emit("event", {type: "debug", de: de, pass: pass});
 }
 
 function draw() {

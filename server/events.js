@@ -1,15 +1,4 @@
 var events = {
-    "debug": {
-        server: function(data, meta) {
-            if (data.pass = meta.cfg.debugPassword) {
-                switch(data.de) {
-                    case "listPlayers":
-                        console.log(meta.players); 
-                    break;
-                }
-            }
-        }
-    },
     "newPlayer": {
         exec: function(data) {
             console.log("New Player:", data.username);

@@ -39,6 +39,8 @@ function reqHandler(req, res) {
     }
 }
 
+
+
 class Player {
     constructor(username_, id_, color_, index_) {
         this.username = username_;
@@ -89,7 +91,7 @@ io.on("connection", function(soc) {
         console.log("Game Started");
         gameLoop = setInterval(turn, 5000);
     }
-    console.log(soc.client.request.domain);
+    console.log(soc.handshake.headers.host);
 });
 
 function disconnect(id) {
