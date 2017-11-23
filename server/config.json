@@ -1,7 +1,5 @@
 {
     "boardSize": 100,
     "port": 80,
-    "origins": [
-        "https://midymyth.github.io"
-    ]
+    "origins": "https://midymyth.github.io:*"
 }
