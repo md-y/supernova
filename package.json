@@ -5,7 +5,7 @@
   "main": "server/supernova.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-	"start": "node \"./server/supernova.js\""
+    "start": "node \"./server/supernova.js\""
   },
   "repository": {
     "type": "git",

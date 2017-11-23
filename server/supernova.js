@@ -8,6 +8,7 @@ gameState = 0, //0 = Stopped; 1 = Running
 gameLoop;
 
 server.listen(process.env.PORT || cfg.port);
+io.origins(cfg.origins);
 
 function reqHandler(req, res) {
     switch(req.url.split('?')[0]) {
@@ -91,7 +92,6 @@ io.on("connection", function(soc) {
         console.log("Game Started");
         gameLoop = setInterval(turn, 5000);
     }
-    console.log(soc.handshake.url);
 });
 
 function disconnect(id) {
