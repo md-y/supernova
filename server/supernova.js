@@ -1,6 +1,8 @@
 var server = require("http").createServer(reqHandler),
 io = require("socket.io")(server),
-events = require("./events.js").events,
+eventsjs = require("./events.js"),
+events = eventsjs.events,
+moves = eventsjs.moves,
 fs = require("fs"),
 cfg,
 players = {},
@@ -55,10 +57,11 @@ class Player {
         this.username = username_;
         this.id = id_;
         this.index = index_;
-        this.health = 100;
+        this.hp = 100;
         this.sp = 0;
         this.color = color_;
         this.lastPing = new Date().getTime();
+        this.move = null;
         do {
             var cont = false;
             this.x = Math.floor(Math.random() * cfg.boardSize);
@@ -120,10 +123,26 @@ function disconnect(id) {
 
 function turn() {
     var time = new Date().getTime();
+    var player;
     for (let i in players) {
-        if (time - players[i].lastPing > 10000) {
+        player = players[i];
+        if (time - player.lastPing > 10000) {
             disconnect(i);
-            console.log("Player " + players[i].username + " (" + i + ") has been timed out.");
+            console.log("Player " + player.username + " (" + i + ") has been timed out.");
+        }
+        if (player.move == null) {
+            player.sp += 5;
+        } else {
+            var move = player.move;
+            switch (move.name) {
+                case "move":
+                    if (Math.abs(player.x - move.x) <= move.area && Math.abs(player.y - move.y) <= move.area) {
+                        player.x = move.x;
+                        player.y = move.y;
+                    }
+                break;
+            }
+            player.move = null;
         }
     }
     io.in("game").emit("event", {type: "turn", players: players});

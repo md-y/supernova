@@ -1,89 +1,34 @@
 <html>
-
     <head id="head">
         <meta charset="UTF-8">
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
         <script type="text/javascript" src="client.js"></script>
         <script type="text/javascript" src="https://midymyth.github.io/js/getkey.js"></script>
+        <link rel="stylesheet" type="text/css" href="client.css">
     </head>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            overflow: hidden;
-            background-color: #404040;
-        }
-        header {
-            display: block;
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100px;
-            z-index: 1;
-            background-color: rgba(225, 225, 225, 0.80);
-        }
-        header * {
-            position: fixed;
-            height: 100px;
-        }
-        #turnClock {
-            color: red;
-            left: 70%;
-            font-size: 5em;
-        }
-        #playerList {
-            top: 0;
-            left: 75%;
-            background-color: rgba(100, 100, 100, 0.25);
-            width: 25%;
-        }
-        #playerList * {
-            display: inline;
-            position: relative;
-            padding-left: 0.5em;
-        }
-        #chat {
-            width: 20%;
-            top: 100px;
-            height: 10%;
-            left: 75%;
-            background-color: rgb(100, 100, 100, 0.2);
-        }
-        #chat * {
-            position: relative;
-            display: block;
-        }
-        #chat #chatTitle {
-            background-color: rgb(100, 100, 100, 0.5);
-            position: relative;
-            height: 1.25rem;
-        }
-        #chat #chatTitle a {
-            text-decoration: underline;
-            color: rgb(0, 0, 75);
-        }
-        #chat #messages {
-            overflow: auto;
-            overflow-wrap: break-word;
-            height: calc(100% - 1.25rem);
-        }
-        #chat #messages .message * {
-            display: inline;
-        }
-        #chat #messages .message {
-            height: 1.25em;
-        }
-        #chat #chatInput {
-            width: 100%;
-            height: 1.5em;
-        }
-    </style>
     <body>     
         <header>
             <h1 id="statusHeading">Loading...</h1>
+            <section id="moveChart">
+                <a href="#" class="natural" available="true" id="move" onclick="setMove(this);">Move</a>
+                <a href="#" class="natural" available="true" id="attack" onclick="setMove(this);">Attack</a>
+                <a href="#" class="natural" available="true" id="charge" onclick="setMove(this);">Charge</a>
+                <a href="#" class="sacrifice" available="false" id="guard" onclick="setMove(this);">Guard</a>
+                <a href="#" class="sacrifice" available="false" id="halfblock" onclick="setMove(this);">Half Block</a>
+                <a href="#" class="sacrifice" available="false" id="fullblock" onclick="setMove(this);">Full Block</a>
+                <a href="#" class="sacrifice" available="false" id="supernova" onclick="setMove(this);">Supernova</a>
+            </section>
+            <section id="statusBars">
+                <div id="hp">
+                    <span></span>
+                </div>
+                <div id="sp">
+                    <span></span>
+                </div>
+            </section>
+            <section id="moveInfo">
+                <p id="moveInfoText"></p>
+            </section>
             <h1 id="turnClock">5</h1>
             <section id="playerList">
                 <h5>Players</h5><br>
@@ -97,8 +42,8 @@
         </header>
         <canvas id="board"
                 onmousemove="mouseX = event.clientX; mouseY = event.clientY;"
-                onmousedown="mouseDown = true;"
-                onmouseup="mouseDown = false;"
+                onmousedown="mouseDown = true; cmouseX = mouseX; cmouseY = mouseY;"
+                onmouseup="mouseDown = false; mouseUp(event.clientX, event.clientY);"
                 onmouseout="mouseDown = false; downKeys.allUp();"
                 onwheel="viewScale += event.deltaY"
                 onkeydown="downKeys[event.key] = true;"

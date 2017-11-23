@@ -17,6 +17,9 @@ var events = {
             turnClock.innerHTML = "5";
             clearInterval(clockUpdater);
             clockUpdater = setInterval(updateClock, 1000);
+            if (!primed) {
+                clearSelected();
+            }
         }
     },
     "ping": {
@@ -40,6 +43,13 @@ var events = {
             }
             players = data.players;
             player = players[soc.id];
+            for (let i in moves.sacrifice) {
+                if (moves.sacrifice[i].cost <= player.sp) {
+                    document.getElementById(i.replace(" ", "")).setAttribute("available", "true");
+                }
+            }
+            hpBar.style.width = player.hp < 0 ? "0%" : player.hp.toString() + '%';
+            spBar.style.width = player.sp > 100 ? "100%" : player.sp.toString() + '%';
         }
     },
     "setup": {
@@ -68,11 +78,61 @@ var events = {
             messages.appendChild(message);
             message.scrollIntoView();
         }
+    },
+    "sendMove": {
+        server: function(data, meta) {
+            meta.players[meta.soc.id].move = data.move;
+        }
     }
 };
 
+var moves = {
+    "natural": {
+        "move": {
+            info:   "Move up to 5 tiles.",
+            area: 5
+        },
+        "attack": {
+            info:   "Do damage to an enemy from up to 5 tiles away.<br>" +
+                    "-20 health for a direct hit<br>" +
+                    "-15 health for hitting the tile next to them<br>" +
+                    "-5 health for intercepting their movement path<br>" +
+                    "(Executes after movement)",
+            area: 5
+        },
+        "charge": {
+            info:   "Do 25 damage to an enemy directly in a melee hit.<br>" +
+                    "(Executes before movement)",
+            area: 5
+        }
+    },
+    "sacrifice": {
+        "guard": {
+            cost: 5,
+            info:   "Blocks 10% of damage.<br>",
+            area: 0
+        },
+        "half block": {
+            cost: 25,
+            info:   "Defend against half of incoming damage for two turns.",
+            area: 0
+        },
+        "full block": {
+            cost: 50,
+            info:   "Defend against all damage from one attack for one turn.",
+            area: 0
+        },
+        "supernova": {
+            cost: 100,
+            info:   "Deliver a massive explosion that covers the entire board and kills everyone except you. <br>" +
+                    "You win instantly.",
+            area: 0
+        }
+    }
+}
+
 try {
-    module.exports = {events};
+    module.exports = {events, moves};
 } catch(err) {
     console.log("This is a client, ignoring Node.js module export.");
 }

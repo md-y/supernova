@@ -1,8 +1,9 @@
-var soc, drawFrame, bd, bde, width, height, turnClock, clockUpdater, 
+var soc, drawFrame, bd, bde, width, height, turnClock, clockUpdater, moveInfoText, hpBar, spBar, primed, 
 messages, chat, chatInput, chatHidden = false, 
 players = {}, playerList, player = {},
 mouseDown = false,
-mouseX = 0, mouseY = 0, pmouseX = 0; pmouseY = 0, gmouseX = 0, gmouseY = 0, //pmouse = mouse pos on the previous frame; gmouse = global mouse pos
+mouseX = 0, mouseY = 0, pmouseX = 0; pmouseY = 0, gmouseX = 0, gmouseY = 0, cmouseX = 0, cmouseY = 0, 
+//pmouse = mouse pos on the previous frame; gmouse = global mouse pos; cmouse = mouse click pos
 cameraX = 0, cameraY = 0, cameraView = 25, viewScale = 50, viewScaleVert = 25, //Viewscale = # of viewed tiles on the X axis
 tilesSR = 100, tileSize = 38;
 args = {},
@@ -15,7 +16,8 @@ downKeys = {
             }
         }
     }
-};
+},
+selectedMove = {};
 
 window.onload = function() {
     args.server = window.atob(getKey(location.href, "server", "aHR0cDovL2xvY2FsaG9zdA=="));
@@ -29,7 +31,7 @@ window.onload = function() {
     eventsElement.src = args.server + (args.server[args.server.length - 1] == '/' ? "events" : "/events");
     eventsElement.type = "text/javascript";
     eventsElement.onload = function() {
-        document.getElementById("statusHeading").style.display = "none";
+        document.getElementById("statusHeading").remove();
         console.log("events.js loaded, connecting to server")
         soc = io(args.server); //Connects to server
 
@@ -58,6 +60,9 @@ window.onload = function() {
     chatInput = document.getElementById("chatInput");
     chat = document.getElementById("chat");
     turnClock = document.getElementById("turnClock");
+    moveInfoText = document.getElementById("moveInfoText");
+    hpBar = document.getElementById("hp");
+    spBar = document.getElementById("sp");
 
     bde = document.getElementById("board"); //Setup Canvas ("board")
     var resetDimensions = function() {
@@ -120,7 +125,10 @@ function draw() {
         ry = Math.floor(cameraY) + y;
         for (var x = 0; x <= viewScale; x++) {
             rx = Math.floor(cameraX) + x;
-            bd.fillStyle = "white"; //Default
+            bd.fillStyle = "#ffffff"; //Default
+            if (primed && Math.abs(rx - player.x) <= selectedMove.area && Math.abs(ry - player.y) <= selectedMove.area) {
+                bd.fillStyle = "#e0e0e0";
+            }
             for (let i in players) {
                 if (rx == players[i].x && ry == players[i].y) { //Players
                     bd.fillStyle = players[i].color;
@@ -129,7 +137,17 @@ function draw() {
             drawTile(x, partX, y, partY); //Background
 
             if (Math.floor(gmouseX - cameraX) == x && Math.floor(gmouseY - cameraY) == y) { //Cursor
-                bd.fillStyle = "#c8c8c8c8";
+                switch (bd.fillStyle){
+                    case "#e0e0e0":
+                        bd.fillStyle = "#a0a0d0c8";
+                    break;
+                    case "#ffffff":
+                        bd.fillStyle = "#c8c8c8c8"; 
+                    break;
+                    default:
+                        bd.fillStyle = "#00000050";
+                    break;
+                }
                 drawTile(x, partX, y, partY);
             }
         }
@@ -186,4 +204,40 @@ function hideChat() {
 function updateClock() {
     var time = parseInt(turnClock.innerHTML, 10) - 1;
     turnClock.innerHTML = time < 0 ? '0' : time.toString();
+}
+
+function mouseUp(x, y) {
+    if (cmouseX == x && cmouseY == y && primed == true) {
+        selectedMove.x = Math.floor(gmouseX);
+        selectedMove.y = Math.floor(gmouseY);
+        sendMove();
+        primed = false;
+    }
+}
+
+function setMove(move) {
+    if (move.getAttribute("available") == "true") {
+        clearSelected();
+        move.setAttribute("selected", "true");
+        selectedMove = moves[move.className][move.innerHTML.toLowerCase()];
+        selectedMove.name = move.innerHTML.toLowerCase();
+        moveInfoText.innerHTML = selectedMove.info;
+
+        if (selectedMove.area == 0) {
+            sendMove();
+        } else {
+            primed = true;
+        }
+    }
+}
+
+function sendMove() {
+    soc.emit("event", {type: "sendMove", move: selectedMove});
+}
+
+function clearSelected() {
+    var selected = document.querySelectorAll("[selected='true']");
+    for (var i = 0; i < selected.length; i++) {
+        selected.item(i).setAttribute("selected", "false");
+    }
 }

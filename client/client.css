@@ -1,0 +1,135 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+body {
+    overflow: hidden;
+    background-color: #404040;
+}
+header {
+    display: block;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100px;
+    z-index: 1;
+    background-color: rgba(225, 225, 225, 0.80);
+}
+header * {
+    position: fixed;
+    height: 100px;
+}
+#moveChart {
+    background-color: rgb(100, 100, 100, 0.25);
+    width: 50%;
+    text-align: center;
+    padding-top: 10px;
+    height: 90px;
+}
+#moveChart * {
+    position: relative;
+    padding: 0.5em;
+    padding-right: 0.5em;
+    display: inline-block;
+    height: 1.5em;
+}
+#moveChart a {
+    text-decoration: underline;
+    color: black;
+    font-size: 1.25vw;
+}
+#moveChart .natural {
+    border: solid medium green;
+}
+#moveChart .sacrifice {
+    border: solid medium purple;
+}
+#moveChart [available="false"] {
+    border: solid medium gray;
+}
+#moveChart [selected="true"] {
+    border: solid medium blue;
+}
+#moveChart #supernova[available="true"] {
+    border: solid medium red;
+}
+#statusBars {
+    width: 50%;
+    top: 80px;
+    height: 20px;
+    background-color: gray;
+}
+#statusBars div {
+    position: relative;
+    display: block;
+    height: 10px;
+}
+#hp {
+    background-color: green;
+    width: 100%;
+}
+#sp {
+    background-color: purple;
+    width: 0;
+}
+#moveInfo {
+    left: 50%;
+    padding: 0.25em;
+    width: 15%;
+}
+#moveInfo #moveInfoText, #moveInfo #moveInfoText * {
+    position: relative;
+    font-size: 1.5vh;
+}
+#turnClock {
+    color: red;
+    left: 70%;
+    font-size: 5em;
+}
+#playerList {
+    top: 0;
+    left: 75%;
+    background-color: rgba(100, 100, 100, 0.25);
+    width: 25%;
+}
+#playerList * {
+    display: inline;
+    position: relative;
+    padding-left: 0.5em;
+}
+#chat {
+    width: 20%;
+    top: 100px;
+    height: 10%;
+    left: 75%;
+    background-color: rgb(100, 100, 100, 0.2);
+}
+#chat * {
+    position: relative;
+    display: block;
+}
+#chat #chatTitle {
+    background-color: rgb(100, 100, 100, 0.5);
+    position: relative;
+    height: 1.25rem;
+}
+#chat #chatTitle a {
+    text-decoration: underline;
+    color: rgb(0, 0, 75);
+}
+#chat #messages {
+    overflow: auto;
+    overflow-wrap: break-word;
+    height: calc(100% - 1.25rem);
+}
+#chat #messages .message * {
+    display: inline;
+}
+#chat #messages .message {
+    height: 1.25em;
+}
+#chat #chatInput {
+    width: 100%;
+    height: 1.5em;
+}
