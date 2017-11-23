@@ -65,18 +65,22 @@ io.on("connection", function(soc) {
     console.log("New connection on socket", soc.id);
     soc.join("game");
     soc.on("event", function(data) {
-        var event = events[data.type];
-        var meta = {players: players, 
-                    soc: soc,
-                    Player: Player,
-                    cfg: cfg,
-                    io: io};
+        try {
+            var event = events[data.type];
+            var meta = {players: players, 
+                        soc: soc,
+                        Player: Player,
+                        cfg: cfg,
+                        io: io};
 
-        if ("exec" in event) {
-            event.exec(data);
-        }
-        if ("server" in event) {
-            event.server(data, meta);
+            if ("exec" in event) {
+                event.exec(data);
+            }
+            if ("server" in event) {
+                event.server(data, meta);
+            }
+        } catch (err) {
+            console.log("Unable to execute event\n" + err);
         }
     });
     soc.on("disconnect", function(data){disconnect(soc.id)});

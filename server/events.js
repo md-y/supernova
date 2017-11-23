@@ -41,9 +41,9 @@ var events = {
             for (let i in data.players) {
                 if (!(i in players)) {
                     var listing = document.createElement("h5");
-                    listing.id = data.players[i].id;
-                    listing.innerHTML = data.players[i].username;
-                    listing.style.color = data.players[i].color;
+                    listing.id = escape(data.players[i].id);
+                    listing.innerHTML = escape(data.players[i].username);
+                    listing.style.color = escape(data.players[i].color);
                     playerList.appendChild(listing);
                 }
             }
@@ -62,6 +62,19 @@ var events = {
     "playerDisconnect": {
         client: function(data) {
             document.getElementById(data.player.id).remove();
+        }
+    },
+    "message": {
+        server: function(data, meta) {
+            meta.io.in("game").emit("event", data);
+        },
+        client: function(data) {
+            var message = document.createElement("div");
+            message.className = "message";
+            message.innerHTML = "<h5 style=\"color:" + escape(data.color) + "\">" + escape(data.author) + ": </h5>" +
+                                "<h5>" + escape(data.message) + "<h5>";
+            messages.appendChild(message);
+            message.scrollIntoView();
         }
     }
 };

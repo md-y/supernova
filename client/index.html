@@ -1,11 +1,4 @@
-<html
-    onmousemove="mouseX = event.clientX; mouseY = event.clientY;"
-    onmousedown="mouseDown = true;"
-    onmouseup="mouseDown = false;"
-    onmouseout="mouseDown = false; downKeys.allUp();"
-    onwheel="viewScale += event.deltaY"
-    onkeydown="downKeys[event.key] = true;"
-    onkeyup="downKeys[event.key] = false;">
+<html>
 
     <head id="head">
         <meta charset="UTF-8">
@@ -28,32 +21,88 @@
             left: 0;
             top: 0;
             width: 100%;
-            height: 10%;
+            height: 100px;
             z-index: 1;
             background-color: rgba(225, 225, 225, 0.80);
         }
         header * {
             position: fixed;
-            height: 10%;
+            height: 100px;
+        }
+        #turnClock {
+            color: red;
+            left: 70%;
+            font-size: 5em;
         }
         #playerList {
             top: 0;
             left: 75%;
+            background-color: rgba(100, 100, 100, 0.25);
+            width: 25%;
         }
         #playerList * {
             display: inline;
             position: relative;
-            padding-right: 0.5em;
+            padding-left: 0.5em;
+        }
+        #chat {
+            width: 20%;
+            top: 100px;
+            height: 10%;
+            left: 75%;
+            background-color: rgb(100, 100, 100, 0.2);
+        }
+        #chat * {
+            position: relative;
+            display: block;
+        }
+        #chat #chatTitle {
+            background-color: rgb(100, 100, 100, 0.5);
+            position: relative;
+            height: 1.25rem;
+        }
+        #chat #chatTitle a {
+            text-decoration: underline;
+            color: rgb(0, 0, 75);
+        }
+        #chat #messages {
+            overflow: auto;
+            overflow-wrap: break-word;
+            height: calc(100% - 1.25rem);
+        }
+        #chat #messages .message * {
+            display: inline;
+        }
+        #chat #messages .message {
+            height: 1.25em;
+        }
+        #chat #chatInput {
+            width: 100%;
+            height: 1.5em;
         }
     </style>
     <body>     
         <header>
             <h1 id="statusHeading">Loading...</h1>
+            <h1 id="turnClock">5</h1>
             <section id="playerList">
                 <h5>Players</h5><br>
             </section>
+            <section id="chat">
+                <h3 id="chatTitle"><a href="?#"onclick="hideChat()">Chat</a></h3>
+                <div id="messages">
+                </div>
+                <input type="text" onkeydown="if(event.key == 'Enter'){sendMessage(value); value = '';}" id="chatInput">
+            </section>
         </header>
-        <canvas id="board">
+        <canvas id="board"
+                onmousemove="mouseX = event.clientX; mouseY = event.clientY;"
+                onmousedown="mouseDown = true;"
+                onmouseup="mouseDown = false;"
+                onmouseout="mouseDown = false; downKeys.allUp();"
+                onwheel="viewScale += event.deltaY"
+                onkeydown="downKeys[event.key] = true;"
+                onkeyup="downKeys[event.key] = false;">
             <h1>Your browser does not support canvases. Please use another.</h1>
         </canvas>
     </body>

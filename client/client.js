@@ -1,4 +1,5 @@
 var soc, drawFrame, bd, bde, width, height, 
+messages, chat, chatInput, chatHidden = false, 
 players = {}, playerList, player = {},
 mouseDown = false,
 mouseX = 0, mouseY = 0, pmouseX = 0; pmouseY = 0, gmouseX = 0, gmouseY = 0, //pmouse = mouse pos on the previous frame; gmouse = global mouse pos
@@ -8,7 +9,7 @@ args = {},
 frameRate = 30,
 downKeys = {
     allUp: function() {
-        for (let i in downKeys) { //1 to avoid this function
+        for (let i in downKeys) {
             if (i != "allUp") {
                 downKeys[i] = false;
             }
@@ -19,7 +20,7 @@ downKeys = {
 window.onload = function() {
     args.server = window.atob(getKey(location.href, "server", "aHR0cDovL2xvY2FsaG9zdA=="));
     args.username = window.atob(getKey(location.href, "name", "amVmZg=="));
-    args.color = getKey(location.href, "color", "#ffffff").split("#")[1];
+    args.color = getKey(location.href, "color", "#000000").split("#")[1];
     args.color = (  parseInt(args.color.substring(0, 2), 16) +
                     parseInt(args.color.substring(2, 4), 16) +
                     parseInt(args.color.substring(4, 6), 16)) / 3 > 200 ? "#c8c8c8" : '#' + args.color; //Remove colors above grayscale 200
@@ -57,6 +58,9 @@ window.onload = function() {
     }
     document.getElementById("head").appendChild(eventsElement);
     playerList = document.getElementById("playerList");
+    messages = document.getElementById("messages");
+    chatInput = document.getElementById("chatInput");
+    chat = document.getElementById("chat");
 
     bde = document.getElementById("board"); //Setup Canvas ("board")
     var resetDimensions = function() {
@@ -118,23 +122,23 @@ function draw() {
     gmouseY = mouseY/tileSize + cameraY + partY;
 
     bd.clearRect(0, 0, width, height);
-    var rx, ry, grayscale;
+    var rx, ry;
     for (var y = 0; y <= viewScaleVert + 1; y++) { //Draw Grid
         ry = Math.floor(cameraY) + y;
         for (var x = 0; x <= viewScale; x++) {
             rx = Math.floor(cameraX) + x;
-            grayscale = x * y;
-            bd.fillStyle = "white";
+            bd.fillStyle = "white"; //Default
             for (let i in players) {
-                if (rx == players[i].x && ry == players[i].y) {
+                if (rx == players[i].x && ry == players[i].y) { //Players
                     bd.fillStyle = players[i].color;
                 }
             }
-            if (Math.floor(gmouseX - cameraX) == x && Math.floor(gmouseY - cameraY) == y) {
-                bd.fillStyle = "#c0c0c0";
-            }
+            drawTile(x, partX, y, partY); //Background
 
-            bd.fillRect((x - partX) * tileSize, (y - partY) * tileSize, tileSize - 1, tileSize - 1); //Draw Tile
+            if (Math.floor(gmouseX - cameraX) == x && Math.floor(gmouseY - cameraY) == y) { //Cursor
+                bd.fillStyle = "#c8c0c0c0";
+                drawTile(x, partX, y, partY);
+            }
         }
     }
 
@@ -149,4 +153,39 @@ function draw() {
     //Update Previous Mouse Location
     pmouseX = mouseX; 
     pmouseY = mouseY; 
+}
+
+function drawTile(x, partX, y, partY) {
+    bd.fillRect((x - partX) * tileSize, (y - partY) * tileSize, tileSize - 1, tileSize - 1);
+}
+
+function sendMessage(msg) {
+    soc.emit("event", {author: args.username, message: msg, color: args.color, type: "message"});
+}
+
+function escape(str) {
+    str.replace(/[&<"']/, function (c) {
+        switch (c) {
+            case '>': return "&gt;";
+            case '<': return "&lt;";
+            case '"': return "&quot;";
+            case "'": return "&apos;";
+            case '&': return "&amp;";
+        }
+    });
+    return str;
+}
+
+function hideChat() {
+    if (chatHidden) {
+        messages.style.display = "block";
+        chatInput.style.display = "block";
+        chat.style["background-color"] = "rgb(100, 100, 100, 0.2)";
+        chatHidden = false;
+    } else {
+        messages.style.display = "none";
+        chatInput.style.display = "none";
+        chat.style["background-color"] = "#00000000";
+        chatHidden = true;
+    }
 }
