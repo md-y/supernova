@@ -92,7 +92,7 @@
                 <h3 id="chatTitle"><a href="#" onclick="hideChat()">Chat</a></h3>
                 <div id="messages">
                 </div>
-                <input type="text" onkeydown="if(event.key == 'Enter'){sendMessage(value); value = '';}" id="chatInput">
+                <input type="text" onkeydown="if(event.key == 'Enter' && value.trim() != ''){sendMessage(value); value = '';}" id="chatInput">
             </section>
         </header>
         <canvas id="board"
@@ -102,7 +102,8 @@
                 onmouseout="mouseDown = false; downKeys.allUp();"
                 onwheel="viewScale += event.deltaY"
                 onkeydown="downKeys[event.key] = true;"
-                onkeyup="downKeys[event.key] = false;">
+                onkeyup="downKeys[event.key] = false;"
+                tabindex="0">
             <h1>Your browser does not support canvases. Please use another.</h1>
         </canvas>
     </body>

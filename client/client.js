@@ -1,4 +1,4 @@
-var soc, drawFrame, bd, bde, width, height, 
+var soc, drawFrame, bd, bde, width, height, turnClock, clockUpdater, 
 messages, chat, chatInput, chatHidden = false, 
 players = {}, playerList, player = {},
 mouseDown = false,
@@ -45,10 +45,7 @@ window.onload = function() {
             }
         });
 
-        soc.emit("event", { type: "newPlayer", 
-                            username: args.username, 
-                            color: args.color
-                            });
+        soc.emit("event", { type: "newPlayer", username: args.username, color: args.color}); //Login
     }
     eventsElement.onerror = function() {
         var h = document.getElementById("statusHeading");
@@ -61,6 +58,7 @@ window.onload = function() {
     messages = document.getElementById("messages");
     chatInput = document.getElementById("chatInput");
     chat = document.getElementById("chat");
+    turnClock = document.getElementById("turnClock");
 
     bde = document.getElementById("board"); //Setup Canvas ("board")
     var resetDimensions = function() {
@@ -136,7 +134,7 @@ function draw() {
             drawTile(x, partX, y, partY); //Background
 
             if (Math.floor(gmouseX - cameraX) == x && Math.floor(gmouseY - cameraY) == y) { //Cursor
-                bd.fillStyle = "#c8c0c0c0";
+                bd.fillStyle = "#c8c8c8c8";
                 drawTile(x, partX, y, partY);
             }
         }
@@ -188,4 +186,9 @@ function hideChat() {
         chat.style["background-color"] = "#00000000";
         chatHidden = true;
     }
+}
+
+function updateClock() {
+    var time = parseInt(turnClock.innerHTML, 10) - 1;
+    turnClock.innerHTML = time < 0 ? '0' : time.toString();
 }

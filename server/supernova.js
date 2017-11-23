@@ -89,7 +89,7 @@ io.on("connection", function(soc) {
         console.log("Game Started");
         gameLoop = setInterval(turn, 5000);
     }
-    
+    console.log(soc.client.request.domain);
 });
 
 function disconnect(id) {

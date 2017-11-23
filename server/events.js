@@ -23,9 +23,11 @@ var events = {
     "turn": {
         client: function(data) {
             console.log("Turn");
-            players = data.players;
             soc.emit("event", {type: "ping"});
             events.sync.client(data);
+            turnClock.innerHTML = "5";
+            clearInterval(clockUpdater);
+            clockUpdater = setInterval(updateClock, 1000);
         }
     },
     "ping": {
@@ -41,7 +43,7 @@ var events = {
             for (let i in data.players) {
                 if (!(i in players)) {
                     var listing = document.createElement("h5");
-                    listing.id = escape(data.players[i].id);
+                    listing.id = data.players[i].id;
                     listing.innerHTML = escape(data.players[i].username);
                     listing.style.color = escape(data.players[i].color);
                     playerList.appendChild(listing);
@@ -56,6 +58,7 @@ var events = {
             cameraX = player.x - 10;
             cameraY = player.y - 10;
             tilesSR = data.boardSize;
+            clockUpdater = setInterval(updateClock, 1000);
             console.log("Setup Complete \nGLHF");
         }
     },
