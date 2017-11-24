@@ -1,6 +1,6 @@
 {
   "name": "supernova",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A multiplayer turn-based web game",
   "main": "server/supernova.js",
   "scripts": {

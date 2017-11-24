@@ -19,6 +19,7 @@ var events = {
             clockUpdater = setInterval(updateClock, 1000);
             if (!primed) {
                 clearSelected();
+                selectedMove = {};
             }
         }
     },
@@ -46,10 +47,15 @@ var events = {
             for (let i in moves.sacrifice) {
                 if (moves.sacrifice[i].cost <= player.sp) {
                     document.getElementById(i.replace(" ", "")).setAttribute("available", "true");
+                } else {
+                    document.getElementById(i.replace(" ", "")).setAttribute("available", "false");
                 }
             }
-            hpBar.style.width = player.hp < 0 ? "0%" : player.hp.toString() + '%';
-            spBar.style.width = player.sp > 100 ? "100%" : player.sp.toString() + '%';
+            hpBar.style.width = player.hp.toString() + '%';
+            spBar.style.width = player.sp.toString() + '%';
+            stats.defense.innerHTML = "Defense: " + Math.round((100 - player.armour * 100)).toString() + '%';
+            stats.hp.innerHTML = "Health: " + player.hp.toString() + '%';
+            stats.sp.innerHTML = "SP: " + player.sp.toString() + '%';
         }
     },
     "setup": {
@@ -83,6 +89,16 @@ var events = {
         server: function(data, meta) {
             meta.players[meta.soc.id].move = data.move;
         }
+    },
+    "gameOver": {
+        client: function(data) {
+            clearInterval(drawFrame);
+            bd.fillStyle = "#ff0000";
+            bd.fillRect(0, 0, bde.width, bde.height);
+
+            alert("Game Over\n" + data.reason);
+            location.reload(true);
+        }
     }
 };
 
@@ -94,38 +110,42 @@ var moves = {
         },
         "attack": {
             info:   "Do damage to an enemy from up to 5 tiles away.<br>" +
-                    "-20 health for a direct hit<br>" +
+                    "-25 health for a direct hit<br>" +
                     "-15 health for hitting the tile next to them<br>" +
-                    "-5 health for intercepting their movement path<br>" +
                     "(Executes after movement)",
             area: 5
         },
         "charge": {
             info:   "Do 25 damage to an enemy directly in a melee hit.<br>" +
                     "(Executes before movement)",
-            area: 5
+            area: 1
         }
     },
     "sacrifice": {
         "guard": {
             cost: 5,
-            info:   "Blocks 10% of damage.<br>",
+            info:   "Blocks 10% of damage from one attack.<br>" +
+                    "(Executes first & is multiplicative)",
             area: 0
         },
         "half block": {
             cost: 25,
-            info:   "Defend against half of incoming damage for two turns.",
+            info:   "Defend against half of incoming damage for two turns. <br>" +
+                    "(Executes first & is multiplicative)",
             area: 0
         },
         "full block": {
             cost: 50,
-            info:   "Defend against all damage from one attack for one turn.",
+            info:   "Defend against all damage from one attack for one turn.<br>" +
+                    "Removes all defense after one turn." +
+                    "(Executes first)",
             area: 0
         },
         "supernova": {
             cost: 100,
             info:   "Deliver a massive explosion that covers the entire board and kills everyone except you. <br>" +
-                    "You win instantly.",
+                    "You win instantly. <br>" +
+                    "(Executes last)",
             area: 0
         }
     }

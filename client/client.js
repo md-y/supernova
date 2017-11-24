@@ -1,4 +1,4 @@
-var soc, drawFrame, bd, bde, width, height, turnClock, clockUpdater, moveInfoText, hpBar, spBar, primed, 
+var soc, drawFrame, bd, bde, width, height, turnClock, clockUpdater, moveInfoText, hpBar, spBar, primed, stats = {}, 
 messages, chat, chatInput, chatHidden = false, 
 players = {}, playerList, player = {},
 mouseDown = false,
@@ -63,6 +63,9 @@ window.onload = function() {
     moveInfoText = document.getElementById("moveInfoText");
     hpBar = document.getElementById("hp");
     spBar = document.getElementById("sp");
+    stats.defense = document.getElementById("defenseStat");
+    stats.hp = document.getElementById("healthStat");
+    stats.sp = document.getElementById("spStat");
 
     bde = document.getElementById("board"); //Setup Canvas ("board")
     var resetDimensions = function() {
@@ -81,6 +84,10 @@ window.onload = function() {
 }
 
 function draw() {
+    if (player.status == "dead") {
+        alert(player.killerName + " has killed you.");
+        location.reload(true);
+    }
     viewScaleVert = height/(width/viewScale);
     tileSize = width/viewScale;
 
@@ -116,8 +123,8 @@ function draw() {
     var partY = cameraY % 1;
     var partX = cameraX % 1;
 
-    gmouseX = mouseX/tileSize + cameraX + partX;
-    gmouseY = mouseY/tileSize + cameraY + partY;
+    gmouseX = mouseX/tileSize + cameraX;
+    gmouseY = mouseY/tileSize + cameraY;
 
     bd.clearRect(0, 0, width, height);
     var rx, ry;
@@ -126,19 +133,27 @@ function draw() {
         for (var x = 0; x <= viewScale; x++) {
             rx = Math.floor(cameraX) + x;
             bd.fillStyle = "#ffffff"; //Default
-            if (primed && Math.abs(rx - player.x) <= selectedMove.area && Math.abs(ry - player.y) <= selectedMove.area) {
-                bd.fillStyle = "#e0e0e0";
+            if (primed && Math.abs(rx - player.x) <= selectedMove.area && Math.abs(ry - player.y) <= selectedMove.area) { //Area
+                bd.fillStyle = "#bebebe";
+            }
+            if (selectedMove.x == rx && selectedMove.y == ry) {
+                bd.fillStyle = "#a0a0d0";
             }
             for (let i in players) {
                 if (rx == players[i].x && ry == players[i].y) { //Players
+                    if (players[i].id == soc.id) {
+                        bd.fillStyle = "#951010";
+                        bd.fillRect((x - partX) * tileSize - 1, (y - partY) * tileSize - 1, tileSize + 2, tileSize + 2);
+                    }
                     bd.fillStyle = players[i].color;
                 }
             }
             drawTile(x, partX, y, partY); //Background
 
-            if (Math.floor(gmouseX - cameraX) == x && Math.floor(gmouseY - cameraY) == y) { //Cursor
+            if (Math.floor(gmouseX - cameraX + partX) == x && Math.floor(gmouseY - cameraY + partY) == y) { //Cursor
                 switch (bd.fillStyle){
-                    case "#e0e0e0":
+                    case "#a0a0d0":
+                    case "#bebebe":
                         bd.fillStyle = "#a0a0d0c8";
                     break;
                     case "#ffffff":
@@ -226,6 +241,8 @@ function setMove(move) {
         if (selectedMove.area == 0) {
             sendMove();
         } else {
+            selectedMove.x = undefined;
+            selectedMove.y = undefined;
             primed = true;
         }
     }

@@ -33,6 +33,15 @@ header * {
     padding-right: 0.5em;
     display: inline-block;
     height: 1.5em;
+    vertical-align: top;
+}
+#moveChart #stats {
+    padding-top: 0;
+}
+#moveChart #stats * {
+    display: block;
+    padding: 0;
+    font-size: 0.75vw;
 }
 #moveChart a {
     text-decoration: underline;
@@ -45,14 +54,14 @@ header * {
 #moveChart .sacrifice {
     border: solid medium purple;
 }
+#moveChart #supernova[available="true"] {
+    border: solid medium red;
+}
 #moveChart [available="false"] {
     border: solid medium gray;
 }
 #moveChart [selected="true"] {
     border: solid medium blue;
-}
-#moveChart #supernova[available="true"] {
-    border: solid medium red;
 }
 #statusBars {
     width: 50%;

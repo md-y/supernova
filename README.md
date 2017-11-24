@@ -1,5 +1,5 @@
 # Supernova
-A multiplayer turn-based strategy web game. <br>
+A multiplayer turn-based fast-pace strategy web game.. <br>
 [How to play](https://github.com/midymyth/supernova/wiki/home)
 ***
 Join a game [here](https://midymyth.github.io/supernova/) or join a lobby below. <br> <br>
