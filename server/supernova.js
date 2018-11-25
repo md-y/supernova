@@ -44,7 +44,7 @@ function reqHandler(req, res) {
         }));
     break;
     default:
-        res.writeHead(302, {"Location": "https://midymyth.github.io/supernova"});
+        res.writeHead(302, {"Location": "https://md-y.github.io/supernova"});
         res.end();
     break;
     }

@@ -1,0 +1,62 @@
+header {
+	background-color: rgb(50, 50, 50);
+	border-bottom: outset thin lime;
+	margin-bottom: 0.35em;
+}
+
+header * {
+    display: inline-block;
+    vertical-align: top;
+	margin-top: 0;
+}
+
+header img {
+	width: 7em;
+	height: 7em;
+	margin: 0.25em;
+}
+
+.button {
+	margin: 0.1em;
+	padding: 0.25em;
+	background-color: black;
+	font-size: 2em;
+	text-decoration: none;
+	color: white;
+}
+
+.button.small {
+	font-size: 1.5em;
+}
+
+.button.tiny {
+	font-size: 1em;
+}
+
+a.button img {
+	width: 0.75em;
+	height: 0.75em;
+	margin: 0;
+	padding-right: 0.15em;
+}
+
+a {
+	color: rgb(200, 200, 255);
+	text-decoration: underline;
+}
+
+body {
+	margin: 0.25em;
+	color: white;
+	background-color: rgb(30, 30, 30);
+}
+
+code {
+	padding: 0.25em;
+	background-color: rgba(150, 150, 150, 0.25);
+}
+
+iframe {
+	border: solid medium black;
+	margin: 0.25em;
+}

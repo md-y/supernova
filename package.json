@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/midymyth/supernova.git"
+    "url": "https://github.com/md-y/supernova.git"
   },
   "keywords": [
     "game",
@@ -18,12 +18,12 @@
     "multiplayer",
     "website"
   ],
-  "author": "midymyth",
+  "author": "m;dy",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/midymyth/supernova/issues"
+    "url": "https://github.com/md-y/supernova/issues"
   },
-  "homepage": "https://midymyth.github.io/supernova",
+  "homepage": "https://md-y.github.io/supernova",
   "dependencies": {
     "socket.io": "^2.0.4"
   }

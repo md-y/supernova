@@ -1,0 +1,23 @@
+.form {
+	margin: 0.75em;
+	padding: 0.75em;
+	border: dashed thin white;
+}
+
+.form input {
+	display: block;
+	margin-bottom: 0.25em;
+	border-left: solid 0.75em gray;
+}
+
+.form input[type=text] {
+	width: 200px;
+}
+
+.form input[required="required"]:not(:valid) {
+	border-left: solid 0.75em red;
+}
+
+.form input.final {
+	border-left: solid 0.75em green;
+}

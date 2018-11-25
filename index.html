@@ -1,16 +1,16 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <link rel="stylesheet" type="text/css" href="https://midymyth.github.io/css/main.css">
-        <link rel="stylesheet" type="text/css" href="https://midymyth.github.io/css/form.css">
-        <script type="text/javascript" src="https://midymyth.github.io/js/getkey.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/main.css">
+        <link rel="stylesheet" type="text/css" href="css/form.css">
+        <script type="text/javascript" src="getkey.js"></script>
     </head>
     <body>
         <header>
             <h1 id="title">Join A Supernova Game</h1>
-            <a id="anotherlink" style="display:none" href="https://midymyth.github.io/supernova/">Join Another</a>
+            <a id="anotherlink" style="display:none" href="https://md-y.github.io/supernova/">Join Another</a>
         </header>
-        <a href="https://github.com/midymyth/supernova/wiki" target="_blank">How to play</a>
+        <a href="https://github.com/md-y/supernova/wiki" target="_blank">How to play</a>
         <div class="form">
             <p id="serverlabel">Server Address</p>
             <input type="text" id="address" required="required">
@@ -21,7 +21,7 @@
             <input type="button" onclick="join()" value="Join" class="final">
         </div>
         <h4>Servers</h4>
-        <a href="https://midymyth.github.io/supernova/?server=aHR0cHM6Ly9zdXBlcm5vdmEtbm9kZS5oZXJva3VhcHAuY29tLw=="><img src="https://img.shields.io/badge/Heroku-Join-brightgreen.svg" alt="Server"></a>
+        <a href="https://md-y.github.io/supernova/?server=aHR0cHM6Ly9zdXBlcm5vdmEtbm9kZS5oZXJva3VhcHAuY29tLw=="><img src="https://img.shields.io/badge/Heroku-Join-brightgreen.svg" alt="Server"></a>
     </body>
     <script>
         var address, username, color;
@@ -45,7 +45,7 @@
         }
         function join() {
             if (address.validity.valid && username.validity.valid) {
-                location.href = "https://midymyth.github.io/supernova/client?server=" + 
+                location.href = "https://md-y.github.io/supernova/client?server=" + 
                                                                     window.btoa(address.value) + "?name=" + 
                                                                     window.btoa(username.value) + "?color=" +
                                                                     color.hex().split("#")[1];
